@@ -89,6 +89,7 @@ public:
     using Transform = typename sofa::defaulttype::SolidTypes<Real>::Transform;
     using SpatialVector = typename sofa::defaulttype::SolidTypes<Real>::SpatialVector;
 
+    using PointID = BaseMeshTopology::PointID;
     using ElementID = BaseMeshTopology::EdgeID;
     using VecElementID = type::vector<BaseMeshTopology::EdgeID>;
     using VecEdges = type::vector<BaseMeshTopology::Edge>;
@@ -164,7 +165,8 @@ public:
     void getTangent(Vec3& t, const Real& baryCoord,
                     const Transform &global_H_local0, const Transform &global_H_local1,const Real &L);
 
-    int getNodeIndices(unsigned int edgeInList, unsigned int &node0Idx, unsigned int &node1Idx );
+    /// Given @param beamId will return the 2 PointID forming the given edge from the list @sa d_edgeList. Return true if found otherwise false.
+    bool getNodeIndices(const ElementID beamID, PointID &node0Idx, PointID &node1Idx) const;
 
     void getInterpolationParam(unsigned int edgeInList, Real &_L, Real &_A, Real &_Iy , Real &_Iz,
                                Real &_Asy, Real &_Asz, Real &J);

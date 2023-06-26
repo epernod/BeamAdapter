@@ -649,7 +649,7 @@ int BeamInterpolation<DataTypes>::computeTransform(unsigned int edgeInList,
 {
     /// 1. Get the indices of element and nodes
     unsigned int node0Idx, node1Idx;
-    if (getNodeIndices( edgeInList,  node0Idx, node1Idx ) == -1)
+    if (getNodeIndices( edgeInList,  node0Idx, node1Idx ) == false)
     {
         dmsg_error() << "[computeTransform2] Error in getNodeIndices(). (Aborting)" ;
         return -1;
@@ -699,7 +699,7 @@ int BeamInterpolation<DataTypes>::computeTransform2(unsigned int edgeInList,
 {
     /// 1. Get the indices of element and nodes
     unsigned int node0Idx, node1Idx;
-    if ( getNodeIndices( edgeInList,  node0Idx, node1Idx ) == -1)
+    if ( getNodeIndices( edgeInList,  node0Idx, node1Idx ) == false)
     {
         dmsg_error() << "[computeTransform2] Error in getNodeIndices(). (Aborting)" ;
         return -1;
@@ -798,23 +798,28 @@ void BeamInterpolation<DataTypes>::getSplineRestTransform(unsigned int edgeInLis
 
 
 template<class DataTypes>
-int BeamInterpolation<DataTypes>::getNodeIndices(unsigned int edgeInList,
-                                                 unsigned int &node0Idx,
-                                                 unsigned int &node1Idx )
+bool BeamInterpolation<DataTypes>::getNodeIndices(const ElementID beamID, PointID& node0Idx, PointID& node1Idx) const
 {
-    if ( m_topologyEdges == nullptr)
+    if (m_topologyEdges == nullptr)
     {
         msg_error() <<"This object does not have edge topology defined (computation halted). " ;
-        return -1;
+        return false;
+    }
+
+    const VecElementID& edges = d_edgeList.getValue();
+    if (beamID >= edges.size())
+    {
+        msg_error() << "Given beamID: " << beamID << " in getNodeIndices is out of bounds: " << edges.size();
+        return false;
     }
 
     /// 1. Get the indices of element and nodes
-    const ElementID& e = d_edgeList.getValue()[edgeInList] ;
+    const ElementID& e = edges[beamID] ;
     const BaseMeshTopology::Edge& edge=  (*m_topologyEdges)[e];
     node0Idx = edge[0];
     node1Idx = edge[1];
 
-    return 1;
+    return true;
 }
 
 
