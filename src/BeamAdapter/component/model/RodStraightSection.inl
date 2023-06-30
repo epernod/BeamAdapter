@@ -19,47 +19,55 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-//
-//
-// Description:
-//
-//
-// Author: Christian Duriez, INRIA
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#define SOFA_PLUGIN_BEAMADAPTER_WIRERESTSHAPE_CPP
+#pragma once
 
-#include <BeamAdapter/component/engine/WireRestShape.inl>
+#include <BeamAdapter/component/model/RodStraightSection.h>
+#include <BeamAdapter/component/model/BaseRodSectionMaterial.inl>
+#include <sofa/core/objectmodel/BaseObject.h>
 
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
-
-namespace sofa::component::engine
+namespace sofa::beamadapter
 {
 
-namespace _wirerestshape_
+template <class DataTypes>
+RodStraightSection<DataTypes>::RodStraightSection()
+    : BaseRodSectionMaterial<DataTypes>()
 {
-using namespace sofa::defaulttype;
 
-/////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
-///
-/// Register the component into the sofa factory.
-/// For more details:
-/// https://www.sofa-framework.org/community/doc/programming-with-sofa/components-api/the-objectfactory/
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-const int WireRestShapeClass = core::RegisterObject("Describe the shape functions on multiple segments using curvilinear abscissa")
-.add< WireRestShape<Rigid3Types> >(true)
-
-;
-
-template class SOFA_BEAMADAPTER_API WireRestShape<Rigid3Types>;
+}
 
 
-} // namespace _wirerestshape_
+template <class DataTypes>
+bool RodStraightSection<DataTypes>::initSection()
+{
+    const auto length = this->d_length.getValue();
+    if (length <= Real(0.0))
+    {
+        msg_error() << "Length is 0 (or negative), check if d_length has been given or well computed.";
+        return false;
+    }
 
-}// namespace sofa::component::engine
+    if (int nbrEdgesVisu = d_nbEdgesVisu.getValue() <= 0)
+    {
+        msg_warning() << "Number of visual edges has been set to an invalid value: " << nbrEdgesVisu << ". Value should be a positive integer. Setting to default value: 10";
+        d_nbEdgesVisu.setValue(10);
+    }
+
+
+    if (int nbEdgesCollis = d_nbEdgesCollis.getValue() <= 0)
+    {
+        msg_warning() << "Number of collision edges has been set to an invalid value: " << nbEdgesCollis << ". Value should be a positive integer. Setting to default value: 20";
+        d_nbEdgesCollis.setValue(10);
+    }
+
+    return true;
+}
+
+
+template <class DataTypes>
+void RodStraightSection<DataTypes>::getRestTransformOnX(Transform& global_H_local, const Real& x_used, const Real& x_start)
+{
+    global_H_local.set(Vec3(x_start + x_used, 0.0, 0.0), Quat());
+}
+
+
+} // namespace sofa::beamadapter

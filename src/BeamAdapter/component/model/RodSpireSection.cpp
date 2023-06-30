@@ -19,47 +19,21 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-//
-//
-// Description:
-//
-//
-// Author: Christian Duriez, INRIA
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#define SOFA_PLUGIN_BEAMADAPTER_WIRERESTSHAPE_CPP
+#define SOFA_PLUGIN_BEAMADAPTER_RODSPIRESECTION_CPP
 
-#include <BeamAdapter/component/engine/WireRestShape.inl>
-
+#include <BeamAdapter/component/model/RodSpireSection.inl>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/defaulttype/VecTypes.h>
 #include <sofa/defaulttype/RigidTypes.h>
 
-namespace sofa::component::engine
+namespace sofa::beamadapter
 {
 
-namespace _wirerestshape_
-{
 using namespace sofa::defaulttype;
 
-/////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
-///
-/// Register the component into the sofa factory.
-/// For more details:
-/// https://www.sofa-framework.org/community/doc/programming-with-sofa/components-api/the-objectfactory/
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
+const int RodSpireSectionClass = core::RegisterObject("Class defining a rod spire section, defining material and geometry parameters.")
+    .add< RodSpireSection<Rigid3Types> >(true);
 
-const int WireRestShapeClass = core::RegisterObject("Describe the shape functions on multiple segments using curvilinear abscissa")
-.add< WireRestShape<Rigid3Types> >(true)
+template class SOFA_BEAMADAPTER_API RodSpireSection<Rigid3Types>;
 
-;
-
-template class SOFA_BEAMADAPTER_API WireRestShape<Rigid3Types>;
-
-
-} // namespace _wirerestshape_
-
-}// namespace sofa::component::engine
+}// namespace sofa::beamadapter

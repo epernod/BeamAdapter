@@ -19,47 +19,40 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-//
-//
-// Description:
-//
-//
-// Author: Christian Duriez, INRIA
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#define SOFA_PLUGIN_BEAMADAPTER_WIRERESTSHAPE_CPP
+#pragma once
 
-#include <BeamAdapter/component/engine/WireRestShape.inl>
+#include <BeamAdapter/config.h>
+#include <BeamAdapter/component/model/BaseRodSectionMaterial.h>
 
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
-
-namespace sofa::component::engine
+namespace sofa::beamadapter
 {
 
-namespace _wirerestshape_
+/**
+ * \class RodStraightSection
+ * \brief Specialization class of @sa BaseRodSectionMaterial describing a rod straight section.
+ *  
+ * This class will describe a rod straight section which will parametrized only using the @sa BaseRodSectionMaterial Data
+ * Method @sa getRestTransformOnX will return: Vec3(current_x, 0 0)
+ */
+template <class DataTypes>
+class RodStraightSection : public sofa::beamadapter::BaseRodSectionMaterial<DataTypes>
 {
-using namespace sofa::defaulttype;
+public:
+    SOFA_CLASS(SOFA_TEMPLATE(RodStraightSection, DataTypes), SOFA_TEMPLATE(BaseRodSectionMaterial, DataTypes));
 
-/////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
-///
-/// Register the component into the sofa factory.
-/// For more details:
-/// https://www.sofa-framework.org/community/doc/programming-with-sofa/components-api/the-objectfactory/
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Default Constructor
+    RodStraightSection();
 
-const int WireRestShapeClass = core::RegisterObject("Describe the shape functions on multiple segments using curvilinear abscissa")
-.add< WireRestShape<Rigid3Types> >(true)
+    /// Override method to get the rest position of the beam. In this implementation, it will basically returns Vec3(x_start + x_used, 0 0)
+    void getRestTransformOnX(Transform& global_H_local, const Real& x_used, const Real& x_start) override;
 
-;
+protected:
+    /// Internal method to init the section. Called by @sa BaseRodSectionMaterial::init() method
+    bool initSection() override;
+};
 
-template class SOFA_BEAMADAPTER_API WireRestShape<Rigid3Types>;
+#if !defined(SOFA_PLUGIN_BEAMADAPTER_RODSTRAIGHTSECTION_CPP)
+extern template class SOFA_BEAMADAPTER_API RodStraightSection<sofa::defaulttype::Rigid3Types>;
+#endif
 
-
-} // namespace _wirerestshape_
-
-}// namespace sofa::component::engine
+} // namespace sofa::beamadapter

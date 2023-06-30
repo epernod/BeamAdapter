@@ -19,47 +19,47 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-//
-//
-// Description:
-//
-//
-// Author: Christian Duriez, INRIA
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#define SOFA_PLUGIN_BEAMADAPTER_WIRERESTSHAPE_CPP
+#pragma once
 
-#include <BeamAdapter/component/engine/WireRestShape.inl>
+#include <BeamAdapter/config.h>
+#include <BeamAdapter/component/model/BaseRodSectionMaterial.h>
 
-#include <sofa/core/ObjectFactory.h>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
-
-namespace sofa::component::engine
+namespace sofa::beamadapter
 {
 
-namespace _wirerestshape_
+using sofa::core::loader::MeshLoader;
+
+/**
+ * \class RodSpireSection
+ * \brief Specialization class of @sa BaseRodSectionMaterial describing a rod spire section.
+ *  
+ * This class will describe a rod spire section using spire diameter and height between each spire. Length and mechanical
+ * parameters are the same as @sa BaseRodSectionMaterial Data
+ * Method @sa getRestTransformOnX will return the current position of the curviline abscisse along the spire.
+ */
+template <class DataTypes>
+class RodSpireSection : public sofa::beamadapter::BaseRodSectionMaterial<DataTypes>
 {
-using namespace sofa::defaulttype;
+public:
+    SOFA_CLASS(SOFA_TEMPLATE(RodSpireSection, DataTypes), SOFA_TEMPLATE(BaseRodSectionMaterial, DataTypes));
 
-/////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
-///
-/// Register the component into the sofa factory.
-/// For more details:
-/// https://www.sofa-framework.org/community/doc/programming-with-sofa/components-api/the-objectfactory/
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// Default Constructor
+    RodSpireSection();
 
-const int WireRestShapeClass = core::RegisterObject("Describe the shape functions on multiple segments using curvilinear abscissa")
-.add< WireRestShape<Rigid3Types> >(true)
+    /// Override method to get the rest position of the beam. In this implementation, it will compute the current position given the spire parameters
+    void getRestTransformOnX(Transform& global_H_local, const Real& x_used, const Real& x_start) override;
 
-;
+protected:
+    /// Internal method to init the section. Called by @sa BaseRodSectionMaterial::init() method
+    bool initSection() override;
 
-template class SOFA_BEAMADAPTER_API WireRestShape<Rigid3Types>;
+public:
+    Data<Real> d_spireDiameter; ///< Data defining the diameter of the spire
+    Data<Real> d_spireHeight; ///< Data defining the height between each spire
+};
 
+#if !defined(SOFA_PLUGIN_BEAMADAPTER_RODSPIRESECTION_CPP)
+extern template class SOFA_BEAMADAPTER_API RodSpireSection<sofa::defaulttype::Rigid3Types>;
+#endif
 
-} // namespace _wirerestshape_
-
-}// namespace sofa::component::engine
+} // namespace sofa::beamadapter
