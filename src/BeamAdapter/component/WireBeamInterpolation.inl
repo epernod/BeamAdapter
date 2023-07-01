@@ -349,45 +349,6 @@ bool WireBeamInterpolation<DataTypes>::breaksInTwo(const Real &x_min_out,  Real 
     return true;
 }
 
-template<class DataTypes>
-template<class T>
-typename T::SPtr  WireBeamInterpolation<DataTypes>::create(T* tObj, core::objectmodel::BaseContext* context, core::objectmodel::BaseObjectDescription* arg)
-{
-    WireRestShape<DataTypes>* _restShape = nullptr;
-    std::string _restShapePath;
-    bool pathOK = false;
-
-    if(arg)
-    {
-        if (arg->getAttribute("WireRestShape",nullptr) != nullptr)
-        {
-            _restShapePath = arg->getAttribute("WireRestShape");
-            context->findLinkDest(_restShape, _restShapePath, nullptr);
-
-            if(_restShape == nullptr)
-              msg_warning(context) << " ("<< tObj->getClassName() <<") : WireRestShape attribute not set correctly, WireBeamInterpolation will be constructed with a default WireRestShape" ;
-            else
-                pathOK = true;
-        }
-        else
-            msg_error(context) << " (" << tObj->getClassName() <<") : WireRestShape attribute not used, WireBeamInterpolation will be constructed with a default WireRestShape" ;
-
-
-        if (!pathOK)
-        {
-            _restShapePath=" ";
-            _restShape = new WireRestShape<DataTypes>();
-        }
-    }
-
-    typename T::SPtr obj = sofa::core::objectmodel::New<T>(_restShape);
-    obj->setPathToRestShape(_restShapePath);
-    if (context) context->addObject(obj);
-    if (arg) obj->parse(arg);
-    return obj;
-}
-
-
 } // namespace _wirebeaminterpolation_
 
 } // namespace sofa::component::fem

@@ -171,16 +171,6 @@ public:
     using  BeamInterpolation<DataTypes>::m_componentstate ;
     ////////////////////////////////////////////////////////////////////////////
 
-public:
-
-    template<class T>
-    static bool canCreate(T* obj, sofa::core::objectmodel::BaseContext* context, sofa::core::objectmodel::BaseObjectDescription* arg)
-    {
-        return Inherited::canCreate(obj,context,arg);
-    }
-
-    template<class T>
-    static typename T::SPtr  create(T* tObj, core::objectmodel::BaseContext* context, core::objectmodel::BaseObjectDescription* arg) ;
 };
 
 
