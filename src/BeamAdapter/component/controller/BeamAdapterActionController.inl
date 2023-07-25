@@ -67,7 +67,7 @@ void BeamAdapterActionController<DataTypes>::onKeyPressedEvent(core::objectmodel
     switch (kev->getKey())
     {
     case 'E':
-        m_currAction = BeamAdapterAction::NO_ACTION;
+        m_currAction = BeamAdapterAction::EXPORT_ACTION;
         m_exportActions = !m_exportActions;
         break;
     case 'D':

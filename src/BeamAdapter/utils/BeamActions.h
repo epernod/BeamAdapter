@@ -38,6 +38,7 @@ namespace sofa::beamadapter
         USE_TOOL_0,
         USE_TOOL_1,
         USE_TOOL_2,
+        EXPORT_ACTION
     };
 
     /// \brief map of action as string keyword instead of int for better clarity in scene scripting
