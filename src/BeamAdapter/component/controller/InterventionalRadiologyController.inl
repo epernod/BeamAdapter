@@ -777,16 +777,13 @@ template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyController()
 {
     const Real& threshold = d_threshold.getValue();
-
+    std::cout << "------- applyInterventionalRadiologyController ------" << std::endl;
     /// Create vectors with the CurvAbs of the noticiable points and the id of the corresponding instrument
     type::vector<Real> newCurvAbs;
 
     /// In case of drop:
     unsigned int previousNumControlledNodes = m_numControlledNodes;
     unsigned int seg_remove = 0;
-
-    if (m_dropCall)
-        processDrop(previousNumControlledNodes, seg_remove);
 
     /// STEP 1
     /// Find the total length of the COMBINED INSTRUMENTS and the one for which xtip > 0 (so the one which are simulated)
@@ -797,7 +794,10 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     for (unsigned int i=0; i<m_instrumentsList.size(); i++)
     {
         xend= d_xTip.getValue()[i];
+        std::cout << "instru: " << i << " | xend: " << xend << std::endl;
+
         Real xb = xend - m_instrumentsList[i]->getRestTotalLength();
+        std::cout << "instru: " << i << " | m_instrumentsList[i]->getRestTotalLength(): " << m_instrumentsList[i]->getRestTotalLength() << std::endl;
         xbegin.push_back(xb);
 
         if (xend> totalLengthCombined)
@@ -815,6 +815,8 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
         }
     }
 
+    std::cout << "totalLengthCombined: " << totalLengthCombined << std::endl;
+
     /// Some verif of step 1
     // if the totalLength is 0, move the first instrument
     if (totalLengthCombined < std::numeric_limits<float>::epsilon())
@@ -827,6 +829,8 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     helper::AdvancedTimer::stepEnd("step1");
 
 
+
+
     /// STEP 2:
     /// get the noticeable points that need to be simulated
     // Fill=> newCurvAbs which provides a vector with curvilinear abscissa of each simulated node
@@ -837,6 +841,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     interventionalRadiologyComputeSampling(newCurvAbs, idInstrumentTable, xbegin, totalLengthCombined);
     helper::AdvancedTimer::stepEnd("step2");
 
+    std::cout << "newCurvAbs: " << newCurvAbs << std::endl;
 
     /// STEP 3
     /// Re-interpolate the positions and the velocities
@@ -850,10 +855,12 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     const sofa::Size nbrCurvAbs = newCurvAbs.size(); // number of simulated nodes
     const sofa::Size prev_nbrCurvAbs = m_nodeCurvAbs.size(); // previous number of simulated nodes;
     const Real prev_maxCurvAbs = m_nodeCurvAbs.back();
+    std::cout << "m_nodeCurvAbs: " << m_nodeCurvAbs << std::endl;
            
     // Change curv if totalLength has changed: modifiedCurvAbs = newCurvAbs - current motion (Length between new and old tip curvAbs)
     type::vector<Real> modifiedCurvAbs;
     totalLengthIsChanging(newCurvAbs, modifiedCurvAbs, idInstrumentTable);
+    std::cout << "modifiedCurvAbs: " << modifiedCurvAbs << std::endl;
 
     sofa::Size nbrUnactiveNode = m_numControlledNodes - nbrCurvAbs; // m_numControlledNodes == nbr Dof | nbr of CurvAbs > 0
     sofa::Size prev_nbrUnactiveNode = previousNumControlledNodes - prev_nbrCurvAbs;
@@ -863,11 +870,16 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
         const sofa::Index globalNodeId = nbrUnactiveNode + xId;
         const Real xCurvAbs = modifiedCurvAbs[xId];
         
+        //std::cout << "xCurvAbs - eps: " << (xCurvAbs - std::numeric_limits<float>::epsilon()) << " | prev_maxCurvAbs + threshold: " << prev_maxCurvAbs + threshold << std::endl;
+
         // 2 cases:  TODO : remove first case
             //1. the abs curv is further than the previous state of the instrument
             //2. this is not the case and the node position can be interpolated using previous step positions
         if ((xCurvAbs - std::numeric_limits<float>::epsilon()) > prev_maxCurvAbs + threshold)
         {
+            //std::cout << "xCurvAbs - eps: " << (xCurvAbs - std::numeric_limits<float>::epsilon()) << std::endl;
+            //std::cout << "prev_maxCurvAbs + threshold: " << prev_maxCurvAbs + threshold << std::endl;
+
             msg_error() << "Case 1 should never happen ==> avoid using totalLengthIsChanging! xCurvAbs = " << xCurvAbs 
                 << " > prev_maxCurvAbs = " << prev_maxCurvAbs << " + threshold: " << threshold << "\n"
                 << "\n | newCurvAbs: " << newCurvAbs                
