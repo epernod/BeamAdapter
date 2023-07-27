@@ -697,8 +697,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     unsigned int previousNumControlledNodes = m_numControlledNodes;
     unsigned int seg_remove = 0;
 
-    /// STEP 1
-    /// Find the total length of the COMBINED INSTRUMENTS and the one for which xtip > 0 (so the one which are simulated)
+    // ## STEP 1: Find the total length of the COMBINED INSTRUMENTS and the one for which xtip > 0 (so the one which are simulated)
     helper::AdvancedTimer::stepBegin("step1");
     Real totalLengthCombined=0.0;
     type::vector<Real> tools_xBegin;
@@ -738,26 +737,23 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     helper::AdvancedTimer::stepEnd("step1");
 
 
-    computeInstrumentsCurvAbs(newCurvAbs, tools_xBegin, totalLengthCombined);
-
-
-    /// STEP 2:
-    /// get the noticeable points that need to be simulated
-    // Fill=> newCurvAbs which provides a vector with curvilinear abscissa of each simulated node
-    //     => id_instrument_table which provides for each simulated node, the id of all instruments which belong this node
+    // ## STEP 2: Get the noticeable points that need to be simulated
+    //     => Fill newCurvAbs which provides a vector with curvilinear abscissa of each simulated node    
     //     => xbegin (theoritical curv abs of the beginning point of the instrument (could be negative) xbegin= xtip - intrumentLength)
     helper::AdvancedTimer::stepBegin("step2");
     type::vector<type::vector<int>> idInstrumentTable;
+    computeInstrumentsCurvAbs(newCurvAbs, tools_xBegin, totalLengthCombined);
+
+    //     => id_instrument_table which provides for each simulated node, the id of all instruments which belong this node    
     fillInstrumentCurvAbsMap(newCurvAbs, tools_xBegin, tools_xEnd, idInstrumentTable);
     helper::AdvancedTimer::stepEnd("step2");
 
     std::cout << "newCurvAbs: " << newCurvAbs << std::endl;
 
-    /// STEP 3
-    /// Re-interpolate the positions and the velocities
+    // ## STEP 3: Re-interpolate the positions and the velocities
     helper::AdvancedTimer::stepBegin("step3");
 
-    // Get write access to current nodes/dofs
+    //    => Get write access to current nodes/dofs
     Data<VecCoord>* datax = this->getMechanicalState()->write(core::VecCoordId::position());
     auto x = sofa::helper::getWriteOnlyAccessor(*datax);
     VecCoord xbuf = x.ref();
@@ -767,7 +763,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     const Real prev_maxCurvAbs = m_nodeCurvAbs.back();
     std::cout << "m_nodeCurvAbs: " << m_nodeCurvAbs << std::endl;
            
-    // Change curv if totalLength has changed: modifiedCurvAbs = newCurvAbs - current motion (Length between new and old tip curvAbs)
+    //    => Change curv if totalLength has changed: modifiedCurvAbs = newCurvAbs - current motion (Length between new and old tip curvAbs)
     type::vector<Real> modifiedCurvAbs;
     totalLengthIsChanging(newCurvAbs, modifiedCurvAbs, idInstrumentTable);
     std::cout << "modifiedCurvAbs: " << modifiedCurvAbs << std::endl;
@@ -777,7 +773,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
 
     for (sofa::Index xId = 0; xId < nbrCurvAbs; xId++)
     {
-        const sofa::Index globalNodeId = nbrUnactiveNode + xId;
+        const sofa::Index globalNodeId = nbrUnactiveNode + xId; // fill the end of the dof buffer
         const Real xCurvAbs = modifiedCurvAbs[xId];
         
         //std::cout << "xCurvAbs - eps: " << (xCurvAbs - std::numeric_limits<float>::epsilon()) << " | prev_maxCurvAbs + threshold: " << prev_maxCurvAbs + threshold << std::endl;
@@ -815,7 +811,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
 
             if (fabs(prev_xCurvAbs - xCurvAbs) < threshold)
             {
-                x[globalNodeId] = xbuf[prev_globalNodeId];
+                x[globalNodeId] = xbuf[prev_globalNodeId]; // xBuf all initialised at start with d_startingPos
             }
             else
             {
@@ -853,8 +849,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     helper::AdvancedTimer::stepEnd("step3");
 
 
-    /// STEP 4
-    /// Assign the beams
+    // ## STEP 4: Assign the beams
     helper::AdvancedTimer::stepBegin("step4");
     sofa::Size nbrBeam = newCurvAbs.size() - 1; // number of simulated beams
     unsigned int numEdges= m_numControlledNodes-1;
@@ -896,16 +891,15 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     }
     helper::AdvancedTimer::stepEnd("step4");
 
-    /// STEP 5
-    /// Fix the not simulated nodes
+
+    // ## STEP 5: Fix the not simulated nodes
     helper::AdvancedTimer::stepBegin("step5");
     unsigned int firstSimulatedNode = m_numControlledNodes - nbrBeam;
 
-    //1. Fix the nodes (beginning of the instruments) that are not "out"
+    //    => 1. Fix the nodes (beginning of the instruments) that are not "out"
     fixFirstNodesWithUntil(firstSimulatedNode);
 
-    //2. Fix the node that are "fixed"
-    // When there are rigid segments, # of dofs is different than # of edges and beams
+    //    => 2. Fix the node that are "fixed". When there are rigid segments, # of dofs is different than # of edges and beams
     const std::vector< Real > *rigidCurvAbs = &d_rigidCurvAbs.getValue();
 
     bool rigid=false;
@@ -942,14 +936,14 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
         }
 
     }
+    helper::AdvancedTimer::stepEnd("step5");
 
-    /// STEP 6
-    /// Activate Beam List for collision of each instrument
+    // ## STEP 6: Activate Beam List for collision of each instrument
     activateBeamListForCollision(newCurvAbs,idInstrumentTable);
 
+    // ## STEP 7: Save new computed Data
     m_nodeCurvAbs = newCurvAbs;
     m_idInstrumentCurvAbsTable = idInstrumentTable;
-    helper::AdvancedTimer::stepEnd("step5");
 }
 
 template <class DataTypes>
