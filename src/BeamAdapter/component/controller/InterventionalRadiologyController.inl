@@ -1052,7 +1052,7 @@ void InterventionalRadiologyController<DataTypes>::totalLengthIsChanging(const t
         }
     }
 
-    sortCurvAbs(modifiedNodeCurvAbs);
+    //sortCurvAbs(modifiedNodeCurvAbs);
 }
 
 
