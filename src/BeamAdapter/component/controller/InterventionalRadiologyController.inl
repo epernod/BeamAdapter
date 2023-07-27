@@ -230,16 +230,6 @@ void InterventionalRadiologyController<DataTypes>::bwdInit()
 }
 
 
-/*!
- * \todo fix the mouse event with better controls
- */
-template <class DataTypes>
-void InterventionalRadiologyController<DataTypes>::onMouseEvent(MouseEvent * mev)
-{
-    SOFA_UNUSED(mev);
-}
-
-
 template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::onKeyPressedEvent(KeypressedEvent *kev)
 {
@@ -1060,11 +1050,6 @@ void InterventionalRadiologyController<DataTypes>::fixFirstNodesWithUntil(unsign
     d_indexFirstNode = firstSimulatedNode-1 ;
 }
 
-template <class DataTypes>
-bool InterventionalRadiologyController<DataTypes>::modifyTopology(void)
-{
-    return false;
-}
 
 template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::getInstrumentList(type::vector<fem::WireBeamInterpolation<DataTypes>*>& list)
