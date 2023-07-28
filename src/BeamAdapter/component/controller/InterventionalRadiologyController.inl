@@ -740,7 +740,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     computeInstrumentsCurvAbs(newCurvAbs, tools_xBegin, totalLengthCombined);
 
     //     => id_instrument_table which provides for each simulated node, the id of all instruments which belong this node    
-    fillInstrumentCurvAbsMap(newCurvAbs, tools_xBegin, tools_xEnd, idInstrumentTable);
+    fillInstrumentCurvAbsTable(newCurvAbs, tools_xBegin, tools_xEnd, idInstrumentTable);
     helper::AdvancedTimer::stepEnd("step2");
 
     // ## STEP 3: Re-interpolate the positions and the velocities
@@ -965,7 +965,7 @@ void InterventionalRadiologyController<DataTypes>::sortCurvAbs(type::vector<Real
 
 
 template <class DataTypes>
-void InterventionalRadiologyController<DataTypes>::fillInstrumentCurvAbsMap(const type::vector<Real>& curvAbs, 
+void InterventionalRadiologyController<DataTypes>::fillInstrumentCurvAbsTable(const type::vector<Real>& curvAbs, 
     const type::vector<Real>& tools_xBegin,
     const type::vector<Real>& tools_xEnd,
     type::vector< type::vector<int> >& idInstrumentTable)
