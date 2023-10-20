@@ -38,7 +38,7 @@ var NAVTREE =
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
-        [ "All", "functions.html", null ],
+        [ "All", "functions.html", "functions_dup" ],
         [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ],
         [ "Typedefs", "functions_type.html", null ]
@@ -53,10 +53,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_adaptive_beam_contact_mapper_8cpp.html#a3d2088e3645f6e64b21c3b1cab13b761",
-"classsofa_1_1component_1_1constraintset_1_1__adaptivebeamlengthconstraint___1_1_adaptive_beam_length_constraint.html#a43380ffcb9d3181ff0df3204f39278df",
-"classsofa_1_1component_1_1engine_1_1_steerable_catheter.html#ae5b6e430aacffadf5be19dadb5f2f725",
-"classsofa_1_1component_1_1forcefield_1_1__adaptivebeamforcefieldandmass___1_1_adaptive_beam_force_field_and_mass.html#a6151c3afd2ea8395734b42adb91cb6cf",
-"namespacesofa_1_1component_1_1constraintset_1_1__adaptive_beam_sliding_constraint__.html#af406957e20d6ffe79ba402a978488694"
+"classsofa_1_1component_1_1constraintset_1_1__adaptive_beam_sliding_constraint___1_1_adaptive_beam_sliding_constraint.html#a7c0bd56aca42d0e855a400b50f3e078b",
+"classsofa_1_1component_1_1controller_1_1_beam_adapter_action_controller.html#adab66cc472c8d794ea721838209463bc",
+"classsofa_1_1component_1_1forcefield_1_1___adaptive_inflatable_beam_force_field___1_1_adaptive_inflatable_beam_force_field.html#a705fac58c33b23c20e6bac3fd2b0bb87",
+"classsofa_1_1component_1_1mapping_1_1_multi_adaptive_beam_mapping.html#a5d284049fac27095c50a0975c242f11c"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
