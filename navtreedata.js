@@ -25,7 +25,19 @@
 var NAVTREE =
 [
   [ "BeamAdapter", "index.html", [
-    [ "Beam Adapter Documentation", "index.html", null ],
+    [ "Beam Adapter Documentation", "index.html", [
+      [ "1. Introduction", "index.html#autotoc_md2", null ],
+      [ "2. Documentation cover:", "index.html#autotoc_md3", null ],
+      [ "3. Technical roadmap", "index.html#autotoc_md4", [
+        [ "AdaptiveBeamMapping", "index.html#autotoc_md5", null ],
+        [ "TO ADD List:", "index.html#autotoc_md6", null ]
+      ] ],
+      [ "4. Examples list:", "index.html#autotoc_md7", [
+        [ "Simple scenario", "index.html#autotoc_md8", null ],
+        [ "Component examples", "index.html#autotoc_md9", null ],
+        [ "Complex scenario", "index.html#autotoc_md10", null ]
+      ] ]
+    ] ],
     [ "Todo List", "todo.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
@@ -52,11 +64,11 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_adaptive_beam_contact_mapper_8cpp.html#a3d2088e3645f6e64b21c3b1cab13b761",
-"classsofa_1_1component_1_1constraint_1_1__implicitsurfaceadaptiveconstraint___1_1_implicit_surface_adaptive_constraint.html#a0d5b8d9201559f393572c31d16e7c6cb",
-"classsofa_1_1component_1_1controller_1_1__interventionalradiologycontroller___1_1_interventional_radiology_controller.html#a89a5e669ec02e829dcf746c372f6552b",
-"classsofa_1_1component_1_1fem_1_1__wirebeaminterpolation___1_1_wire_beam_interpolation.html#acafdd2cf24955752dc590e9f70246104",
-"classsofa_1_1component_1_1mapping_1_1__beamlengthmapping___1_1_beam_length_mapping.html#a9e13ffe2dae7869bd0d73858f0f62e28"
+"",
+"classsofa_1_1component_1_1collision_1_1_multi_adaptive_beam_contact_mapper.html#ad4256d564c89e33662dd22579d2415ac",
+"classsofa_1_1component_1_1controller_1_1__interventionalradiologycontroller___1_1_interventional_radiology_controller.html#a551573cd0fd10d5af8c17a531f1c1c0e",
+"classsofa_1_1component_1_1fem_1_1__wirebeaminterpolation___1_1_wire_beam_interpolation.html#a5772058181f00dce54aa8cfa0baf6c1b",
+"classsofa_1_1component_1_1mapping_1_1__beamlengthmapping___1_1_beam_length_mapping.html#a46151a99afc038d4234a2f9ff3d3f7ee"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
