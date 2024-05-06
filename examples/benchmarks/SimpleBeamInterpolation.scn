@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <Node name="root" gravity="0 -9.81 0" dt="0.01" bbox="-3 -6 -3 3 3 3">
     <RequiredPlugin name="BeamAdapter"/> <!-- Needed to use components [WireBeamInterpolation WireRestShape] -->
-    <RequiredPlugin name="Sofa.Component.Constraint.Projective"/> <!-- Needed to use components [FixedProjectiveConstraint] -->
+    <RequiredPlugin name="Sofa.Component.Constraint.Projective"/> <!-- Needed to use components [FixedConstraint] -->
     <RequiredPlugin name="Sofa.Component.LinearSolver.Direct"/> <!-- Needed to use components [BTDLinearSolver] -->
     <RequiredPlugin name="Sofa.Component.ODESolver.Backward"/> <!-- Needed to use components [EulerImplicitSolver] -->
     <RequiredPlugin name="Sofa.Component.StateContainer"/> <!-- Needed to use components [MechanicalObject] -->
@@ -19,9 +19,9 @@
         <BTDLinearSolver verbose="0"/>
         <RegularGridTopology name='MeshLines' nx='100' ny='1' nz='1' xmax='100' xmin='0' ymin='0' ymax='0' zmax='0' zmin='0'/>
         <MechanicalObject template='Rigid3d' name='DOFs' />
-        <FixedProjectiveConstraint name="FixedConstraint" indices="0 99" />
+        <FixedConstraint name="FixedConstraint" indices="0 99" />
         <BeamInterpolation name="BeamInterpolation" radius="0.1" /> 
         <AdaptiveBeamForceFieldAndMass name="BeamForceField"  computeMass="1" massDensity="10"/>
-    </Node>  
+    </Node>
     
 </Node>
