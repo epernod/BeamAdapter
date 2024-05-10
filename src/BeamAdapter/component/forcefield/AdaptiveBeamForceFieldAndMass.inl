@@ -65,7 +65,6 @@ AdaptiveBeamForceFieldAndMass<DataTypes>::AdaptiveBeamForceFieldAndMass()
     , d_useShearStressComputation(initData(&d_useShearStressComputation, true, "shearStressComputation","if false, suppress the shear stress in the computation"))
     , d_reinforceLength(initData(&d_reinforceLength, false, "reinforceLength", "if true, a separate computation for the error in elongation is peformed"))
     , l_interpolation(initLink("interpolation","Path to the Interpolation component on scene"))
-    , l_instrumentParameters(initLink("instrumentParameters", "link to an object specifying physical parameters based on abscissa"))
 {
 }
 
@@ -548,21 +547,8 @@ void AdaptiveBeamForceFieldAndMass<DataTypes>::addForce (const MechanicalParams*
         /// material parameters
         beamMatrices._rho = d_massDensity.getValue();
 
-        /// Temp : we only overide values for which a Data has been set in the WireRestShape
-        if (l_instrumentParameters.get())
-        {
-            Real x_curv = 0;
-            l_interpolation->getAbsCurvXFromBeam(beamId, x_curv);
-
-            /// The length of the beams is only known to the interpolation !
-            l_instrumentParameters->getInterpolationParam(x_curv, beamMatrices._rho, beamMatrices._A, beamMatrices._Iy,
-                beamMatrices._Iz, beamMatrices._Asy, beamMatrices._Asz, beamMatrices._J);
-        }
-        else
-        {
-            l_interpolation->getInterpolationParam(beamId, beamMatrices._L, beamMatrices._A, beamMatrices._Iy,
-                beamMatrices._Iz, beamMatrices._Asy, beamMatrices._Asz, beamMatrices._J);
-        }
+        l_interpolation->getInterpolationParam(beamId, beamMatrices._L, beamMatrices._A, beamMatrices._Iy,
+            beamMatrices._Iz, beamMatrices._Asy, beamMatrices._Asz, beamMatrices._J);
 
 
         /// compute the local mass matrices
