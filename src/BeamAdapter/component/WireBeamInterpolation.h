@@ -73,7 +73,7 @@ using sofa::type::vector;
  * TODO : put in a separate class what is specific to wire shape !
  */
 template<class DataTypes>
-class WireBeamInterpolation : public virtual BaseBeamInterpolation<DataTypes>
+class WireBeamInterpolation : public BaseBeamInterpolation<DataTypes>
 {
 public:
     SOFA_CLASS(SOFA_TEMPLATE(WireBeamInterpolation, DataTypes) ,
@@ -94,6 +94,8 @@ public:
     typedef typename Inherited::Vec2 Vec2;
     typedef typename Inherited::Vec3 Vec3;
     typedef typename Inherited::Quat Quat;
+
+    using BeamSection = sofa::beamadapter::BeamSection;
 
     WireBeamInterpolation(sofa::component::engine::WireRestShape<DataTypes> *_restShape = nullptr);
 
