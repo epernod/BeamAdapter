@@ -1,4 +1,4 @@
-/******************************************************************************
+﻿/******************************************************************************
 *                              BeamAdapter plugin                             *
 *                  (c) 2006 Inria, University of Lille, CNRS                  *
 *                                                                             *
@@ -19,44 +19,20 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-//
-// C++ Implementation : WireBeamInterpolation / AdaptiveBeamForceFieldAndMass
-//
-// Description:
-//
-//
-// Author: Christian Duriez, INRIA
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#define SOFA_PLUGIN_BEAMADAPTER_WIREBEAMINTERPOLATION_CPP
-
-#include <BeamAdapter/config.h>
-#include <BeamAdapter/component/WireBeamInterpolation.inl>
-#include <sofa/defaulttype/VecTypes.h>
-#include <sofa/defaulttype/RigidTypes.h>
+#include <gtest/gtest.h>
+#include <sofa/simulation/graph/DAGNode.h>
+#include <sofa/simpleapi/SimpleApi.h>
 #include <sofa/core/ObjectFactory.h>
 
-
-namespace sofa::component::fem::_wirebeaminterpolation_
+TEST(AdaptiveBeamController, target)
 {
-using namespace sofa::defaulttype;
+    const auto node = sofa::simpleapi::createNode("node");
+    const auto controller = sofa::simpleapi::createObject(node, "AdaptiveBeamController");
 
-/////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
-///
-/// Register the component into the sofa factory.
-/// For more details:
-/// https://www.sofa-framework.org/community/doc/programming-with-sofa/components-api/the-objectfactory/
-///
-////////////////////////////////////////////////////////////////////////////////////////////////////
+    const auto& creators = sofa::core::ObjectFactory::getInstance()->getEntry("AdaptiveBeamController").creatorMap;
 
-//TODO(damien): Il faut remplacer les descriptions dans RegisterObject par un vrai description
-static int WireBeamInterpolationClass = core::RegisterObject("Adaptive Beam Interpolation on Wire rest Shape")
-.add< WireBeamInterpolation<Rigid3Types> >();
+    const auto it = creators.find(sofa::defaulttype::Rigid3Types::Name());
+    EXPECT_NE(it, creators.end());
 
-template class SOFA_BEAMADAPTER_API WireBeamInterpolation<Rigid3Types>;
-
-} // namespace sofa::component::fem::_wirebeaminterpolation_
-
-
+    EXPECT_EQ(std::string(it->second->getTarget()), std::string("BeamAdapter"));
+}

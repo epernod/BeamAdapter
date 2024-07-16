@@ -32,15 +32,14 @@
 //
 #define SOFA_PLUGIN_BEAMADAPTER_SUTURECONTROLLER_CPP
 
+#include <BeamAdapter/config.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/defaulttype/RigidTypes.h>
 
 #include <BeamAdapter/component/controller/SutureController.inl>
 
-namespace sofa::component::controller
-{
 
-namespace _suturecontroller_
+namespace sofa::component::controller::_suturecontroller_
 {
 
 using namespace sofa::defaulttype;
@@ -60,6 +59,4 @@ static int SutureControllerClass = core::RegisterObject("Provides a Mouse & Keyb
 
 template class SOFA_BEAMADAPTER_API SutureController<Rigid3Types>;
 
-} /// _suturecontroller_
-
-} /// namespace sofa::component::controller
+} // namespace sofa::component::controller::_suturecontroller_

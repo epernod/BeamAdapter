@@ -34,14 +34,13 @@
 
 //////////////////////// Inclusion of headers...from wider to narrower/closer //////////////////////
 #include <sofa/defaulttype/RigidTypes.h>
+#include <BeamAdapter/config.h>
 #include <sofa/core/ObjectFactory.h>
 
 #include <BeamAdapter/component/forcefield/AdaptiveBeamForceFieldAndMass.inl>
 
-namespace sofa::component::forcefield
-{
 
-namespace _adaptivebeamforcefieldandmass_
+namespace sofa::component::forcefield::_adaptivebeamforcefieldandmass_
 {
 
 /////////////////////////////////////////// FACTORY ////////////////////////////////////////////////
@@ -61,6 +60,4 @@ template class SOFA_BEAMADAPTER_API AdaptiveBeamForceFieldAndMass<sofa::defaultt
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-} /// _adaptivebeamforcefiedlandmass_
-
-} /// namespace sofa::component::forcefield
+} // namespace sofa::component::forcefield::_adaptivebeamforcefieldandmass_

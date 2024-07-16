@@ -32,18 +32,15 @@
 //
 #define SOFA_PLUGIN_BEAMADAPTER_INTERVENTIONALRADIOCONTROLLER_CPP
 
+#include <BeamAdapter/config.h>
 #include <sofa/core/ObjectFactory.h>
 #include <sofa/defaulttype/VecTypes.h>
 #include <sofa/defaulttype/RigidTypes.h>
 
-#include <BeamAdapter/config.h>
 #include <BeamAdapter/component/controller/InterventionalRadiologyController.inl>
 
 
-namespace sofa::component::controller
-{
-
-namespace _interventionalradiologycontroller_
+namespace sofa::component::controller::_interventionalradiologycontroller_
 {
 
 using namespace sofa::defaulttype;
@@ -63,6 +60,6 @@ static int InterventionalRadiologyControllerClass = core::RegisterObject("Provid
 
 template class SOFA_BEAMADAPTER_API InterventionalRadiologyController<Rigid3Types>;
 
-} // namespace _interventionalradiologycontroller_
+} // namespace sofa::component::controller::_interventionalradiologycontroller_
 
-} // namespace sofa::component::controller
+

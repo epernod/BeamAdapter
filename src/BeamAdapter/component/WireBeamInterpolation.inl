@@ -35,10 +35,8 @@
 #include <BeamAdapter/component/WireBeamInterpolation.h>
 #include <BeamAdapter/component/BeamInterpolation.inl>
 
-namespace sofa::component::fem
-{
 
-namespace _wirebeaminterpolation_
+namespace sofa::component::fem::_wirebeaminterpolation_
 {
 
 using sofa::component::engine::WireRestShape ;
@@ -232,6 +230,6 @@ bool WireBeamInterpolation<DataTypes>::getApproximateCurvAbs(const Vec3& x_input
 }
 
 
-} // namespace _wirebeaminterpolation_
+} // namespace sofa::component::fem::_wirebeaminterpolation_
 
-} // namespace sofa::component::fem
+
