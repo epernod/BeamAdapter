@@ -19,20 +19,22 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#pragma once
+#define SOFA_PLUGIN_BEAMADAPTER_BaseBeamInterpolation_CPP
+
+#include <BeamAdapter/config.h>
+#include <BeamAdapter/component/BaseBeamInterpolation.inl>
+#include <sofa/defaulttype/VecTypes.h>
+#include <sofa/defaulttype/RigidTypes.h>
+#include <sofa/core/ObjectFactory.h>
 
 
-namespace sofa::beamadapter
+namespace sofa::component::fem::_basebeaminterpolation_
 {
-    struct BeamSection {
-        double _r{}; 			///< Radius of the beam section
-        double _rInner{}; 	    ///< Inner radius of the section if beam is hollow
-        double _Iy{};           ///< Iy is the cross-section moment of inertia (assuming mass ratio = 1) about the y axis, see https ://en.wikipedia.org/wiki/Second_moment_of_area
-        double _Iz{}; 		    ///< Iz is the cross-section moment of inertia (assuming mass ratio = 1) about the z axis, see https ://en.wikipedia.org/wiki/Second_moment_of_area
-        double _J{};  		    ///< Polar moment of inertia (J = Iy + Iz)
-        double _A{}; 			///< A is the cross-sectional area
-        double _Asy{}; 		    ///< _Asy is the y-direction effective shear area =  10/9 (for solid circular section) or 0 for a non-Timoshenko beam
-        double _Asz{}; 		    ///< _Asz is the z-direction effective shear area
-    };
+using namespace sofa::defaulttype;
 
-} // namespace sofa::beamAdapter
+
+template class SOFA_BEAMADAPTER_API BaseBeamInterpolation<Rigid3Types>;
+
+} // namespace sofa::component::fem::_basebeaminterpolation_
+
+

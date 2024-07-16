@@ -33,19 +33,18 @@
 #pragma once
 
 #include <BeamAdapter/component/WireBeamInterpolation.h>
-#include <BeamAdapter/component/BeamInterpolation.inl>
+#include <BeamAdapter/component/BaseBeamInterpolation.inl>
 
 
 namespace sofa::component::fem::_wirebeaminterpolation_
 {
 
 using sofa::component::engine::WireRestShape ;
-
+using namespace sofa::beamadapter;
 
 template <class DataTypes>
 WireBeamInterpolation<DataTypes>::WireBeamInterpolation(sofa::component::engine::WireRestShape<DataTypes> *_restShape)
-: Inherited()
-, m_restShape(initLink("WireRestShape", "link to the component on the scene"), _restShape)
+    : m_restShape(initLink("WireRestShape", "link to the component on the scene"), _restShape)
 {
 
 
@@ -55,8 +54,6 @@ WireBeamInterpolation<DataTypes>::WireBeamInterpolation(sofa::component::engine:
 template <class DataTypes>
 void WireBeamInterpolation<DataTypes>::init()
 {
-    Inherited::init();
-
     if( m_restShape.get() == nullptr )
     {
         msg_error() << "Missing WireRestShape. The component is thus de-activated" ;
@@ -164,6 +161,31 @@ void WireBeamInterpolation<DataTypes>::getCurvAbsAtBeam(const unsigned int &edge
     x_output += this->getLength(edgeInList_input) * baryCoord_input;
 }
 
+
+template<class DataTypes>
+void WireBeamInterpolation<DataTypes>::getInterpolationParam(unsigned int edgeInList, Real& _L, Real& _A, Real& _Iy, Real& _Iz,
+    Real& _Asy, Real& _Asz, Real& _J)
+{
+    _L = this->d_lengthList.getValue()[edgeInList];
+    Real _rho;
+    Real x_curv = 0;
+    this->getAbsCurvXFromBeam(edgeInList, x_curv);
+
+    auto restShape = this->m_restShape.get();
+    restShape->getInterpolationParam(x_curv, _rho, _A, _Iy, _Iz, _Asy, _Asz, _J);
+}
+
+
+template<class DataTypes>
+const BeamSection& WireBeamInterpolation<DataTypes>::getBeamSection(int edgeIndex)
+{
+    Real x_curv = 0;
+    this->getAbsCurvXFromBeam(edgeIndex, x_curv);
+
+    auto restShape = this->m_restShape.get();
+    return restShape->getBeamSection(x_curv);
+}
+
 template<class DataTypes>
 bool WireBeamInterpolation<DataTypes>::getApproximateCurvAbs(const Vec3& x_input, const VecCoord& x, Real& x_output)
 {
@@ -228,6 +250,7 @@ bool WireBeamInterpolation<DataTypes>::getApproximateCurvAbs(const Vec3& x_input
     getCurvAbsAtBeam(beamIndex, beamBary, x_output);
     return projected;
 }
+
 
 
 } // namespace sofa::component::fem::_wirebeaminterpolation_
