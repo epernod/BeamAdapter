@@ -318,7 +318,7 @@ const BeamSection& WireRestShape<DataTypes>::getBeamSection(const Real& x_curv) 
 
 
 template <class DataTypes>
-typename WireRestShape<DataTypes>::Real WireRestShape<DataTypes>::getLength()
+const typename WireRestShape<DataTypes>::Real& WireRestShape<DataTypes>::getLength() const
 {
     return d_keyPoints.getValue().back();
 }

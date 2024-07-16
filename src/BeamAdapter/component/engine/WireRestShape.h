@@ -110,9 +110,9 @@ public:
      void computeOrientation(const Vec3& AB, const Quat& Q, Quat &result);     
      
      
-     Real getLength() ;
+     const Real& getLength() const;
      void getCollisionSampling(Real &dx, const Real &x_curv);
-     void getNumberOfCollisionSegment(Real &dx, unsigned int &numLines) ;
+     void getNumberOfCollisionSegment(Real &dx, unsigned int &numLines);
 
 
 

@@ -101,29 +101,10 @@ public:
     BeamInterpolation() ;
     virtual ~BeamInterpolation() override = default;
 
-    //////////////////////////////////// Exposing this object in the factory ///////////////////////
-    /// Pre-construction check method called by ObjectFactory.
-    /// Check that DataTypes matches the MechanicalState.
-    template<class T>
-    static bool canCreate(T* obj, sofa::core::objectmodel::BaseContext* context, sofa::core::objectmodel::BaseObjectDescription* arg)
-    {
-        if (dynamic_cast<MechanicalState<DataTypes>*>(context->getMechanicalState()) == nullptr)
-        {
-            arg->logError(std::string("No mechanical state with the datatype '") + DataTypes::Name() +
-                "' found in the context node.");
-            return false;
-        }
-        return sofa::core::objectmodel::BaseObject::canCreate(obj, context, arg);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     //////////////////////////////////// Inherited from Base ///////////////////////////////////////
     void init() override ;
     void bwdInit() override ;
     void reinit() override ;
-    void reset() override ;
 
     //TODO(dmarchal@cduriez) Ca me semble détourner l'API pour faire des choses par surprise. A mon avis la bonne solution
     //est d'implémenter un vrai binding Python pour BeamInterpolation. Avec une fonction updateInterpolation
@@ -140,6 +121,8 @@ public:
     bool verifyTopology();
     void computeCrossSectionInertiaMatrix();
 
+    /// Given @param beamId will return the 2 PointID forming the given edge from the list @sa d_edgeList. Return true if found otherwise false.
+    bool getNodeIndices(const ElementID beamID, PointID &node0Idx, PointID &node1Idx) const;
     void getInterpolationParam(unsigned int edgeInList, Real &_L, Real &_A, Real &_Iy , Real &_Iz,
                                Real &_Asy, Real &_Asz, Real &J) override;
 

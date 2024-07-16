@@ -181,16 +181,6 @@ public:
     using  BaseBeamInterpolation<DataTypes>::d_componentState ;
     ////////////////////////////////////////////////////////////////////////////
 
-public:
-
-    template<class T>
-    static bool canCreate(T* obj, sofa::core::objectmodel::BaseContext* context, sofa::core::objectmodel::BaseObjectDescription* arg)
-    {
-        return Inherited::canCreate(obj,context,arg);
-    }
-
-    template<class T>
-    static typename T::SPtr  create(T* tObj, core::objectmodel::BaseContext* context, core::objectmodel::BaseObjectDescription* arg) ;
 
     /////////////////////////// Deprecated Methods  ////////////////////////////////////////// 
     /// For coils: a part of the coil instrument can be brokenIn2  (by default the point of release is the end of the straight length)

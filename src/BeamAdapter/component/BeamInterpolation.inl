@@ -264,14 +264,6 @@ void BeamInterpolation<DataTypes>::storeResetState()
     updateInterpolation();
 }
 
-template<class DataTypes>
-void BeamInterpolation<DataTypes>::reset()
-{
-    if(d_componentState.getValue()==ComponentState::Invalid)
-        return ;
-
-    bwdInit();
-}
 
 template<class DataTypes>
 bool BeamInterpolation<DataTypes>::interpolationIsAlreadyInitialized()
@@ -482,6 +474,32 @@ void BeamInterpolation<DataTypes>::getSplineRestTransform(unsigned int edgeInLis
         else
             msg_error() <<"This component needs a context mechanical state if the 'straight' parameter is set to false." ;
     }
+}
+
+
+template<class DataTypes>
+bool BeamInterpolation<DataTypes>::getNodeIndices(const ElementID beamID, PointID& node0Idx, PointID& node1Idx) const
+{
+    if (m_topologyEdges == nullptr)
+    {
+        msg_error() <<"This object does not have edge topology defined (computation halted). " ;
+        return false;
+    }
+
+    const VecElementID& edges = d_edgeList.getValue();
+    if (beamID >= edges.size())
+    {
+        msg_error() << "Given beamID: " << beamID << " in getNodeIndices is out of bounds: " << edges.size();
+        return false;
+    }
+
+    /// 1. Get the indices of element and nodes
+    const ElementID& e = edges[beamID] ;
+    const BaseMeshTopology::Edge& edge=  (*m_topologyEdges)[e];
+    node0Idx = edge[0];
+    node1Idx = edge[1];
+
+    return true;
 }
 
 

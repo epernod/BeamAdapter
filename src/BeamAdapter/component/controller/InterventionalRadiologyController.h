@@ -88,20 +88,18 @@ public:
     virtual ~InterventionalRadiologyController() = default;
 
     ////////////////////// Inherited from BaseObject ///////////////////////////////////////////////
-    virtual void init() override ;
-    virtual void bwdInit() override ;
+    void init() override;
+    void bwdInit() override;
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     ////////////////////// Inherited from Controller ///////////////////////////////////////////////
-    virtual void onMouseEvent(core::objectmodel::MouseEvent *) override ;
-    virtual void onKeyPressedEvent(core::objectmodel::KeypressedEvent *) override ;
-    virtual void onBeginAnimationStep(const double dt) override ;
+    void onMouseEvent(core::objectmodel::MouseEvent*) override {};
+    void onKeyPressedEvent(core::objectmodel::KeypressedEvent *) override;
+    void onBeginAnimationStep(const double dt) override;
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    virtual bool modifyTopology(void);
     void interventionalRadiologyCollisionControls(type::vector<Real> &x_point_list,
                                                   type::vector<int> &id_instrument_list,
                                                   type::vector<int> &removeEdge);
