@@ -233,6 +233,9 @@ void InterventionalRadiologyController<DataTypes>::bwdInit()
 template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::onKeyPressedEvent(KeypressedEvent *kev)
 {
+    if (m_useBeamActions)
+        return;
+
     /// Control keys for interventonal Radiology simulations:
     switch(kev->getKey())
     {
@@ -293,6 +296,9 @@ template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::onBeginAnimationStep(const double dt)
 {
     SOFA_UNUSED(dt);
+
+    if (m_useBeamActions)
+        return;
 
     BaseContext* context = getContext();
     auto xInstrTip = sofa::helper::getWriteOnlyAccessor(d_xTip);
@@ -689,7 +695,7 @@ template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyController()
 {
     const Real& threshold = d_threshold.getValue();
-    //std::cout << std::endl << std::endl << "------- applyInterventionalRadiologyController ------" << std::endl;
+
     
     // Create vectors with the CurvAbs of the noticiable points and the id of the corresponding instrument
     type::vector<Real> newCurvAbs;
@@ -720,7 +726,6 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
         newCurvAbs.push_back(0.0);
     }
 
-
     /// Some verif of step 1
     // if the totalLength is 0, move the first instrument
     if (totalLengthCombined < std::numeric_limits<float>::epsilon())
@@ -736,10 +741,10 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     // ## STEP 2: Get the noticeable points that need to be simulated
     //     => Fill newCurvAbs which provides a vector with curvilinear abscissa of each simulated node    
     //     => xbegin (theoritical curv abs of the beginning point of the instrument (could be negative) xbegin= xtip - intrumentLength)
-    helper::AdvancedTimer::stepBegin("step2");
+    helper::AdvancedTimer::stepBegin("step2");    
     computeInstrumentsCurvAbs(newCurvAbs, tools_xBegin, totalLengthCombined);
 
-    //     => id_instrument_table which provides for each simulated node, the id of all instruments which belong this node    
+    //     => id_instrument_table which provides for each simulated node, the id of all instruments which belong this node
     fillInstrumentCurvAbsTable(newCurvAbs, tools_xBegin, tools_xEnd, idInstrumentTable);
     helper::AdvancedTimer::stepEnd("step2");
 
@@ -754,11 +759,17 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
     auto x = sofa::helper::getWriteOnlyAccessor(*datax);
     VecCoord xbuf = x.ref();
 
-    const sofa::Size nbrCurvAbs = newCurvAbs.size(); // number of simulated nodes
+    sofa::Size nbrCurvAbs = newCurvAbs.size(); // number of simulated nodes
+    if (nbrCurvAbs > x.size())
+    {
+        msg_warning() << "Parameters missmatch. There are more curv abscisses '" << nbrCurvAbs << "' than the number of dof: " << x.size();
+        nbrCurvAbs = x.size();
+    }
+
     const sofa::Size prev_nbrCurvAbs = m_nodeCurvAbs.size(); // previous number of simulated nodes;
 
-    const sofa::Size nbrUnactiveNode = m_numControlledNodes - nbrCurvAbs; // m_numControlledNodes == nbr Dof | nbr of CurvAbs > 0
-    const sofa::Size prev_nbrUnactiveNode = m_numControlledNodes - prev_nbrCurvAbs;
+    const sofa::Size nbrUnactiveNode = (m_numControlledNodes > nbrCurvAbs) ? m_numControlledNodes - nbrCurvAbs : 0; // m_numControlledNodes == nbr Dof | nbr of CurvAbs > 0
+    const sofa::Size prev_nbrUnactiveNode = (m_numControlledNodes > prev_nbrCurvAbs) ? m_numControlledNodes - prev_nbrCurvAbs : 0;
 
     for (sofa::Index xId = 0; xId < nbrCurvAbs; xId++)
     {
@@ -919,6 +930,7 @@ void InterventionalRadiologyController<DataTypes>::applyInterventionalRadiologyC
 }
 
 
+
 template <class DataTypes>
 void InterventionalRadiologyController<DataTypes>::totalLengthIsChanging(const type::vector<Real>& newNodeCurvAbs,
                                                                          type::vector<Real>& modifiedNodeCurvAbs,
@@ -934,18 +946,20 @@ void InterventionalRadiologyController<DataTypes>::totalLengthIsChanging(const t
     modifiedNodeCurvAbs = newNodeCurvAbs;
 
     // we look for the last value in the CurvAbs
-    if (fabs(dLength) < d_threshold.getValue())
+    if (fabs(dLength) <= d_threshold.getValue())
         return;
 
-    for (unsigned int i = newTable.size() - 1; i > 0; --i)
+    for (unsigned int i = 0; i < newTable.size(); i++)
     {
         if (newTable[i].size() == 1)
         {
             modifiedNodeCurvAbs[i] -= dLength;
+            if (i > 1 && modifiedNodeCurvAbs[i] < modifiedNodeCurvAbs[i - 1])
+            {
+                modifiedNodeCurvAbs[i] = modifiedNodeCurvAbs[i - 1];
+            }
         }
     }
-
-    //sortCurvAbs(modifiedNodeCurvAbs);
 }
 
 

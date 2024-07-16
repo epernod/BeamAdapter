@@ -34,12 +34,11 @@
 #include <BeamAdapter/component/engine/WireRestShape.h>
 
 #include <sofa/core/behavior/MechanicalState.h>
-#include <sofa/component/topology/container/dynamic/QuadSetTopologyModifier.h>
 
 #include <sofa/simulation/TopologyChangeVisitor.h>
 #include <sofa/core/visual/VisualParams.h>
 
-#define EPSILON 0.0001
+#define EPSILON 0.0000000001
 #define VERIF 1
 
 namespace sofa::component::engine
@@ -92,7 +91,6 @@ void WireRestShape<DataTypes>::init()
         return;
     }
 
-
     if (l_sectionMaterials.empty())
     {
         msg_error() << "No BaseRodSectionMaterial set. At least one material should be set and link using wireMaterials.";
@@ -107,14 +105,9 @@ void WireRestShape<DataTypes>::init()
 
     initLengths();
 
-    // Get pointer to the topology Modifier (for topological changes)
-    _topology->getContext()->get(edgeMod);
-    if (edgeMod == nullptr)
-    {
-        msg_warning() << "No EdgeSetTopologyModifier found in the same node as the topology container: " << _topology->getName() << ". This wire won't support topological changes.";
-    }
-
+  
     initTopology();
+
     
     this->d_componentState.setValue(sofa::core::objectmodel::ComponentState::Valid);
     msg_info() << "WireRestShape end init";    
@@ -126,10 +119,8 @@ void WireRestShape<DataTypes>::initLengths()
 {
     auto keyPointList = sofa::helper::getWriteOnlyAccessor(d_keyPoints);
     auto densityList = sofa::helper::getWriteOnlyAccessor(d_density);
-
     keyPointList.resize(l_sectionMaterials.size() + 1);
     keyPointList[0] = Real(0.0);
-
     densityList.resize(l_sectionMaterials.size());
     
     for (unsigned int i = 0; i < l_sectionMaterials.size(); ++i)

@@ -626,7 +626,7 @@ int BeamInterpolation<DataTypes>::computeTransform(const ElementID edgeInList,
 {
     /// 1. Get the indices of element and nodes
     unsigned int node0Idx, node1Idx;
-    if ( getNodeIndices( edgeInList,  node0Idx, node1Idx ) == false)
+    if ( getNodeIndices( edgeInList,  node0Idx, node1Idx ) == -1)
     {
         dmsg_error() << "[computeTransform] Error in getNodeIndices(). (Aborting)" ;
         return -1;

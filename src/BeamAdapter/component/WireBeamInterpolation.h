@@ -167,14 +167,13 @@ public:
     /// Bring inherited attributes and function in the current lookup context.
     /// otherwise any access to the base::attribute would require
     /// the "this->" approach.
-    using  BeamInterpolation<DataTypes>::m_componentstate ;
+    using  BeamInterpolation<DataTypes>::d_componentState ;
     ////////////////////////////////////////////////////////////////////////////
 
 
-
     /////////////////////////// Deprecated Methods  ////////////////////////////////////////// 
-
     /// For coils: a part of the coil instrument can be brokenIn2  (by default the point of release is the end of the straight length)
+    [[deprecated("Releasing catheter or brokenIn2 mode is not anymore supported. Feature has been removed after release v23.06")]]
     bool breaksInTwo(const Real& x_min_out, Real& x_break, int& numBeamsNotUnderControlled) {
         SOFA_UNUSED(x_min_out);
         SOFA_UNUSED(x_break);

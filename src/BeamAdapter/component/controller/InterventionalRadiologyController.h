@@ -108,12 +108,15 @@ public:
     int getTotalNbEdges()const;
 
     void applyAction(sofa::beamadapter::BeamAdapterAction action);
+    /// Method to warn this controller that a BeamActionController is controlling the scene. Will bypass the event handling in this component.
+    void useBeamAction(bool value) { m_useBeamActions = value; }
 
     /// Getter to the tools curviline abscisses sorted @sa m_nodeCurvAbs at the current timestep.
     [[nodiscard]] const type::vector<Real>& getCurrentCurvAbscisses() const { return m_nodeCurvAbs; }
 
 
     /////////////////////////// Deprecated Methods  ////////////////////////////////////////// 
+    [[deprecated("Releasing catheter or brokenIn2 mode is not anymore supported. Feature has been removed after release v23.06")]]
     void processDrop(unsigned int& previousNumControlledNodes, unsigned int& seg_remove)
     {
         SOFA_UNUSED(previousNumControlledNodes);
@@ -138,6 +141,7 @@ public:
 
     /// Interface for interventionalRadiology instruments:
     virtual void applyInterventionalRadiologyController(void);
+    
     
 private:
     /** Compute the sambling curv abscisses using each instrument sampling and key points parameters
@@ -171,7 +175,7 @@ public:
     Data<unsigned int>   d_indexFirstNode; // First Node simulated
     
     
-
+    bool m_useBeamActions = false;
     bool m_FF, m_RW, m_sensored;
     FixedConstraint<DataTypes> *    m_fixedConstraint;
     type::vector<Vec3d>                   m_sensorMotionData;

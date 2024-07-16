@@ -19,44 +19,25 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#pragma once
+//
+// Author: Eulalie Coevoet
+//
+// Copyright: See COPYING file that comes with this distribution
 
-#include <BeamAdapter/config.h>
-#include <BeamAdapter/component/model/BaseRodSectionMaterial.h>
+#define BEAMADAPTER_MAPPING_BEAMPROJECTIONDIFFERENCEMULTIMAPPING_CPP
 
-namespace sofa::beamadapter
+#include <BeamAdapter/component/mapping/BeamProjectionDifferenceMultiMapping.inl>
+
+#include <sofa/defaulttype/VecTypes.h>
+#include <sofa/core/ObjectFactory.h>
+
+namespace beamadapter::mapping
 {
 
-/**
- * \class RodStraightSection
- * \brief Specialization class of @sa BaseRodSectionMaterial describing a rod straight section.
- *  
- * This class will describe a rod straight section which will parametrized only using the @sa BaseRodSectionMaterial Data
- * Method @sa getRestTransformOnX will return: Vec3(current_x, 0 0)
- */
-template <class DataTypes>
-class RodStraightSection : public sofa::beamadapter::BaseRodSectionMaterial<DataTypes>
-{
-public:
-    SOFA_CLASS(SOFA_TEMPLATE(RodStraightSection, DataTypes), SOFA_TEMPLATE(BaseRodSectionMaterial, DataTypes));
+using namespace sofa::defaulttype;
 
-    using Real = typename DataTypes::Real;
-    using Transform = typename sofa::defaulttype::SolidTypes<Real>::Transform;
-    using Quat = sofa::type::Quat<Real>;
+// Register in the Factory
+int BeamProjectionDifferenceMultiMappingClass = sofa::core::RegisterObject("Computes the difference between given points and their projection on a beam.")
+        .add< BeamProjectionDifferenceMultiMapping< Rigid3Types, Rigid3Types, Rigid3Types > >();
 
-    /// Default Constructor
-    RodStraightSection();
-
-    /// Override method to get the rest position of the beam. In this implementation, it will basically returns Vec3(x_start + x_used, 0 0)
-    void getRestTransformOnX(Transform& global_H_local, const Real& x_used, const Real& x_start) override;
-
-protected:
-    /// Internal method to init the section. Called by @sa BaseRodSectionMaterial::init() method
-    bool initSection() override;
-};
-
-#if !defined(SOFA_PLUGIN_BEAMADAPTER_RODSTRAIGHTSECTION_CPP)
-extern template class SOFA_BEAMADAPTER_API RodStraightSection<sofa::defaulttype::Rigid3Types>;
-#endif
-
-} // namespace sofa::beamadapter
+} // namespace
