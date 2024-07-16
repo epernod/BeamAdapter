@@ -530,14 +530,16 @@ template <class DataTypes>
 void BeamInterpolation<DataTypes>::getYoungModulusAtX(int beamId, Real& /*x_curv*/, Real& youngModulus, Real& cPoisson)
 {
     const auto& defaultYoungModuli = d_defaultYoungModulus.getValue();
-    if (beamId < defaultYoungModuli.size()) {
+    if (beamId < int(defaultYoungModuli.size())) {
+
         youngModulus = defaultYoungModuli[beamId];
     } else {
         youngModulus = m_defaultYoungModulus;
     }
     
     const auto& poissonRatios = d_poissonRatio.getValue();
-    if (beamId < poissonRatios.size()) {
+    if (beamId < int(poissonRatios.size())) {
+
         cPoisson     = poissonRatios[beamId];
     } else {
         cPoisson     = m_defaultPoissonRatio;
@@ -785,7 +787,6 @@ void BeamInterpolation<DataTypes>::getSplinePoints(unsigned int edgeInList, cons
         return;
     }
 
-    //std::cout << " getSplinePoints  : global_H_local0 ="<<global_H_local0<<"    global_H_local1 ="<<global_H_local1<<std::endl;
     const Real& _L = d_lengthList.getValue()[edgeInList];
     this->getControlPointsFromFrame(global_H_local0, global_H_local1,_L,P0, P1,P2, P3);
 

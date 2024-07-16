@@ -20,7 +20,7 @@
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
 #include <sofa/testing/BaseTest.h>
-#include <sofa/simulation/graph/SimpleApi.h>
+#include <sofa/simpleapi/SimpleApi.h>
 
 #include <sofa/simulation/common/SceneLoaderXML.h>
 #include <sofa/simulation/Node.h>
@@ -175,7 +175,7 @@ void WireRestShape_test::testParameterInit()
     EXPECT_EQ(nbP_density.size(), 2);
     EXPECT_EQ(nbP_density, nbP_density_ref);
 
-    Real dx1, dx2, dx3, nbEdgesCol_ref = 20;
+    Real dx1, dx2, dx3;
     wire->getCollisionSampling(dx1, 0.0);
     wire->getCollisionSampling(dx2, fullLength);
     wire->getCollisionSampling(dx3, 90.0);

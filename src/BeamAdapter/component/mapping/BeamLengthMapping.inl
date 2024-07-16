@@ -41,7 +41,6 @@
 #include <sofa/core/visual/VisualParams.h>
 
 #include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/helper/AdvancedTimer.h>
 #include <sofa/core/MechanicalParams.h>
 #include <sofa/helper/ScopedAdvancedTimer.h>
 #include <iomanip>
@@ -64,7 +63,6 @@ using sofa::core::State;
 using helper::ReadAccessor;
 using helper::WriteAccessor;
 using sofa::core::ConstVecCoordId;
-using sofa::helper::AdvancedTimer;
 using sofa::core::MultiVecCoordId;
 using sofa::core::VecCoordId;
 using sofa::core::VecDerivId;
@@ -124,7 +122,8 @@ void BeamLengthMapping< TIn, TOut>::reset()
 template <class TIn, class TOut>
 void BeamLengthMapping< TIn, TOut>::apply(const MechanicalParams* mparams, Data<VecCoord>& dOut, const Data<InVecCoord>& dIn)
 {
-    sofa::helper::ScopedAdvancedTimer timer("AdaptiveBeamMappingApply");
+    SOFA_UNUSED(mparams);
+    SCOPED_TIMER("AdaptiveBeamMappingApply");
 
     VecCoord& out = *dOut.beginEdit();
     const InVecCoord& in = dIn.getValue();
@@ -157,7 +156,7 @@ void BeamLengthMapping< TIn, TOut>::applyJ(const core::MechanicalParams* mparams
 {
     SOFA_UNUSED(mparams);
 
-    sofa::helper::ScopedAdvancedTimer timer("AdaptiveBeamMappingApplyJ");
+    SCOPED_TIMER("AdaptiveBeamMappingApplyJ");
 
     VecDeriv& out = *dOut.beginEdit();
     const InVecDeriv& in= dIn.getValue();
@@ -228,14 +227,9 @@ void BeamLengthMapping< TIn, TOut>::applyJ(const core::MechanicalParams* mparams
 template <class TIn, class TOut>
 void BeamLengthMapping< TIn, TOut>::applyJT(const core::MechanicalParams* mparams, Data<InVecDeriv>& dOut, const Data<VecDeriv>& dIn)
 {
-
-    if(this->f_printLog.getValue() ){
-        std::cout<<" --------------------- applyJT --------------------"<<std::endl;
-    }
-
     SOFA_UNUSED(mparams);
 
-    sofa::helper::ScopedAdvancedTimer timer("AdaptiveBeamMappingMechanicalApplyJT");
+    SCOPED_TIMER("AdaptiveBeamMappingMechanicalApplyJT");
     InVecDeriv& out = *dOut.beginEdit();
     const VecDeriv& in= dIn.getValue();
 
@@ -300,12 +294,6 @@ void BeamLengthMapping< TIn, TOut>::applyJT(const core::MechanicalParams* mparam
         Transform DOF0Global_H_local0, DOF1Global_H_local1;
         l_adaptativebeamInterpolation->getDOFtoLocalTransformInGlobalFrame(i, DOF0Global_H_local0, DOF1Global_H_local1, x_in);
 
-
-        if(this->f_printLog.getValue() ){
-            std::cout<<"DOF0Global_H_local0 = "<<DOF0Global_H_local0<<std::endl;
-            std::cout<<"DOF1Global_H_local1 = "<<DOF1Global_H_local1<<std::endl;
-        }
-
         // rotate back the force to the local frame
         SpatialVector f0, f1,f2,f3;
         f0.setForce( DOF0Global_H_local0.getOrientation().inverseRotate(F0) );
@@ -355,7 +343,7 @@ void BeamLengthMapping< TIn, TOut>::applyJT(const core::ConstraintParams* cparam
 {
     SOFA_UNUSED(cparams);
 
-    sofa::helper::ScopedAdvancedTimer timer("AdaptiveBeamMappingConstrainApplyJT");
+    SCOPED_TIMER("AdaptiveBeamMappingConstrainApplyJT");
 
     InMatrixDeriv& out = *dOut.beginEdit();
     const OutMatrixDeriv& in = dIn.getValue();
@@ -444,9 +432,6 @@ void BeamLengthMapping< TIn, TOut>::applyJT(const core::ConstraintParams* cparam
 template <class TIn, class TOut>
 void BeamLengthMapping< TIn, TOut>::applyDJT(const MechanicalParams* mparams, core::MultiVecDerivId parentDfId, core::ConstMultiVecDerivId childDfId)
 {
-    if(this->f_printLog.getValue() ){
-        std::cout<<" --------------------- applyDJT --------------------"<<std::endl;
-    }
     const unsigned& geometricStiffness = d_geometricStiffness.getValue();
     if( !geometricStiffness ) return;
 
@@ -607,10 +592,7 @@ void BeamLengthMapping< TIn, TOut>::applyDJT(const MechanicalParams* mparams, co
 template <class TIn, class TOut>
 void BeamLengthMapping<TIn, TOut>::updateK(const core::MechanicalParams* mparams, core::ConstMultiVecDerivId childForceId )
 {
-
-    if(this->f_printLog.getValue() ){
-        std::cout<<" entering updateK ..........."<<std::endl;
-    }
+    SOFA_UNUSED(mparams);
     const unsigned& geometricStiffness = d_geometricStiffness.getValue();
     if( !geometricStiffness ) { K_geom.resize(0,0); return; }
     //helper::ReadAccessor<Data<VecDeriv> > childForce( *childForceId[(const core::State<TOut>*)this->getToModels()[0]].read() );
@@ -633,11 +615,6 @@ void BeamLengthMapping<TIn, TOut>::updateK(const core::MechanicalParams* mparams
         // if stabilized GS (geometricStiffness==2) -> keep only force in extension
         if( childForce[i][0] < 0 || geometricStiffness==1 )
         {
-
-            if(this->f_printLog.getValue() ){
-                std::cout<<" step1 ...........  childForce[i][0] = "<<childForce[i][0]<<std::endl;
-            }
-
             //1. get the indices of the Dofs of the beam a
             unsigned int IdxNode[2];;
             l_adaptativebeamInterpolation->getNodeIndices(i,IdxNode[0],IdxNode[1]);
@@ -931,17 +908,6 @@ void BeamLengthMapping<TIn, TOut>::computeDJtSpline(const Real &f_input, const V
 
     // 1 compute the derivatives of these relations:
     //F_IP[0] = IP[0]*f_input*(18.0 + B)/(72.0*IP[0].norm());
-
-    if(this->f_printLog.getValue() ){
-        std::cout<<"computeDJtSpline :"<<std::endl;
-        for(unsigned int k=0; k<4; k++){
-            for(unsigned int l=0; l<4;l++){
-                std::cout<<" "<<a[k][l];
-            }
-            std::cout<<" "<<std::endl;
-        }
-    }
-
 
     Mat3 K_IP[4];
 

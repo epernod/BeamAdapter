@@ -40,7 +40,6 @@
 #include <sofa/core/visual/VisualParams.h>
 
 #include <sofa/simulation/AnimateBeginEvent.h>
-#include <sofa/helper/AdvancedTimer.h>
 #include <sofa/helper/ScopedAdvancedTimer.h>
 #include <sofa/core/ConstraintParams.h>
 #include <sofa/core/MechanicalParams.h>
@@ -203,23 +202,23 @@ void AdaptiveBeamMapping< TIn, TOut>::clear(int size)
 template <class TIn, class TOut>
 void AdaptiveBeamMapping< TIn, TOut>::apply(const MechanicalParams* mparams, Data<VecCoord>& dOut, const Data<InVecCoord>& dIn)
 {
-    ScopedAdvancedTimer timer("AdaptiveBeamMapping_Apply");
+    SCOPED_TIMER("AdaptiveBeamMapping_Apply");
 
     auto out = sofa::helper::getWriteOnlyAccessor(dOut);
     const InVecCoord& in = dIn.getValue();
 
     m_isXBufferUsed=false;
 
-    AdvancedTimer::stepBegin("pointsRedistribution");
     // When using an adaptatif controller, one need to redistribute the points at each time step
-    if (d_useCurvAbs.getValue() && !d_contactDuplicate.getValue())
-        computeDistribution();
+    {
+        SCOPED_TIMER("computeDistribution");
+        if (d_useCurvAbs.getValue() && !d_contactDuplicate.getValue())
+            computeDistribution();
+    }
 
-    AdvancedTimer::stepEnd("pointsRedistribution");
-
-    AdvancedTimer::stepBegin("resizeToModel&Out");
     if (!m_isSubMapping)
     {
+        SCOPED_TIMER("resizeToModel&Out");
         if (d_nbPointsPerBeam.getValue() > 0)
         {
             this->toModel->resize(m_pointBeamDistribution.size());
@@ -231,7 +230,6 @@ void AdaptiveBeamMapping< TIn, TOut>::apply(const MechanicalParams* mparams, Dat
             out.resize(d_points.getValue().size());
         }
     }
-    AdvancedTimer::stepEnd("resizeToModel&Out");
 
     MultiVecCoordId x = VecCoordId::position();
     MultiVecCoordId xfree = VecCoordId::freePosition();
@@ -297,7 +295,7 @@ void AdaptiveBeamMapping< TIn, TOut>::applyJ(const core::MechanicalParams* mpara
         return;
 
     SOFA_UNUSED(mparams);
-    ScopedAdvancedTimer timer("AdaptiveBeamMapping_applyJ");
+    SCOPED_TIMER("AdaptiveBeamMapping_applyJ");
 
     auto out = sofa::helper::getWriteOnlyAccessor(dOut);
     const InVecDeriv& in= dIn.getValue();
@@ -386,7 +384,7 @@ void AdaptiveBeamMapping< TIn, TOut>::applyJT(const core::MechanicalParams* mpar
 
     SOFA_UNUSED(mparams);
 
-    ScopedAdvancedTimer timer("AdaptiveBeamMapping_applyJT");
+    SCOPED_TIMER("AdaptiveBeamMapping_applyJT");
     auto out = sofa::helper::getWriteOnlyAccessor(dOut);
     const VecDeriv& in= dIn.getValue();
 
@@ -429,7 +427,7 @@ void AdaptiveBeamMapping< TIn, TOut>::applyJT(const core::ConstraintParams* cpar
 {
     SOFA_UNUSED(cparams);
 
-    ScopedAdvancedTimer timer("AdaptiveBeamMapping_ApplyJT");
+    SCOPED_TIMER("AdaptiveBeamMapping_ApplyJT");
     auto out = sofa::helper::getWriteOnlyAccessor(dOut);
     const OutMatrixDeriv& in = dIn.getValue();
     const Data<InVecCoord>& dataInX = *this->getFromModel()->read(ConstVecCoordId::position());
@@ -675,7 +673,6 @@ void AdaptiveBeamMapping< TIn, TOut>::computeDistribution()
         else
         {
             m_pointBeamDistribution.reserve(points.size());
-            const bool printLog = this->f_printLog.getValue();
             for (unsigned int i=0; i<points.size(); i++)
             {
                 const unsigned int beamId = (int)floor(points[i][0]);
